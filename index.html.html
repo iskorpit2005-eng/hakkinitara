@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hakkını Tara — Özlük Hakları Taraması</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#15202b;--navy:#1b2a41;--paper:#f6f5f2;--card:#fff;
+    --line:#e2ded6;--muted:#6b7280;--accent:#b07d16;
+    --high:#9e3b2c;--med:#b07d16;--info:#2c5f7c;--r:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:800px;margin:0 auto;padding:0 18px}
+  header{background:var(--navy);color:#fff;padding:30px 0 26px}
+  .brand{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#a8bdd6;font-weight:600}
+  h1{font-family:'Source Serif 4',Georgia,serif;font-size:clamp(28px,6vw,40px);line-height:1.15;margin:8px 0 10px;font-weight:700}
+  .tag{color:#c9d8ea;font-size:15px;max-width:58ch}
+  main{padding:26px 0 60px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:16px}
+  h2{font-family:'Source Serif 4',Georgia,serif;font-size:22px;margin-bottom:10px;font-weight:700}
+  h3{font-size:16px;font-weight:600;margin-bottom:6px}
+  p{margin-bottom:12px}p:last-child{margin-bottom:0}
+  .small{font-size:13.5px;color:var(--muted)}
+  ul{margin:0 0 12px 20px}li{margin-bottom:5px}
+  .note{background:#f0f4f8;border-left:3px solid var(--info);padding:12px 14px;border-radius:0 6px 6px 0;font-size:14px;margin-bottom:16px}
+  .warn{background:#fdf4e7;border-left:3px solid var(--med);padding:12px 14px;border-radius:0 6px 6px 0;font-size:14px;margin-bottom:16px}
+  .btn{display:inline-block;background:var(--navy);color:#fff;border:none;padding:12px 22px;border-radius:7px;font:inherit;font-weight:600;cursor:pointer;transition:opacity .15s}
+  .btn:hover{opacity:.88}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}
+  .btn.sm{padding:7px 13px;font-size:13px}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:7px;font:inherit;background:#fff;color:var(--ink);margin-bottom:14px}
+  label.fl{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .prog{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:18px}
+  .prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+  .step{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px}
+  .qtext{font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;line-height:1.35;margin-bottom:6px}
+  .qhelp{font-size:14px;color:var(--muted);margin-bottom:16px}
+  .opts{display:flex;flex-direction:column;gap:9px}
+  .opt{text-align:left;background:#fff;border:1px solid var(--line);border-radius:8px;padding:13px 15px;font:inherit;cursor:pointer;transition:all .12s;line-height:1.45}
+  .opt:hover{border-color:var(--navy);background:#fbfaf8}
+  .mods{display:flex;flex-direction:column;gap:10px;margin-bottom:6px}
+  .mod{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:13px 15px;cursor:pointer;transition:all .12s}
+  .mod:hover{border-color:var(--navy)}
+  .mod.on{border-color:var(--navy);background:#fbfaf8}
+  .mod.lock{opacity:.45;cursor:not-allowed}
+  .mod input{margin-top:5px;width:17px;height:17px;flex:none;accent-color:var(--navy)}
+  .mod b{display:block;font-size:15px}
+  .mod span{font-size:13.5px;color:var(--muted)}
+  .secth{font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:700;margin:26px 0 10px;padding-bottom:7px;border-bottom:2px solid var(--line)}
+  .f{border:1px solid var(--line);border-left-width:4px;border-radius:0 8px 8px 0;background:#fff;margin-bottom:12px;overflow:hidden}
+  .f.high{border-left-color:var(--high)}.f.med{border-left-color:var(--med)}.f.info{border-left-color:var(--info)}
+  .fhead{padding:15px 17px;cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+  .fhead:hover{background:#fbfaf8}
+  .badge{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;white-space:nowrap;margin-top:2px}
+  .high .badge{background:#f6e7e4;color:var(--high)}.med .badge{background:#faf1dc;color:#8a6210}.info .badge{background:#e8f0f6;color:var(--info)}
+  .ftitle{font-weight:600;flex:1;font-size:15.5px}
+  .chev{color:var(--muted);font-size:13px;margin-top:3px}
+  .fbody{display:none;padding:0 17px 17px;border-top:1px solid var(--line)}
+  .f.open .fbody{display:block;padding-top:15px}
+  .meta{font-size:13px;color:var(--muted);margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+  .meta b{color:var(--ink)}
+  .dil{background:#f8f7f4;border:1px solid var(--line);border-radius:7px;padding:14px;font-size:13px;white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.65;margin:10px 0;max-height:320px;overflow:auto}
+  .ph{background:#faf1dc;padding:0 2px;border-radius:2px}
+  .sum{background:var(--navy);color:#fff;border-radius:var(--r);padding:22px;margin-bottom:18px}
+  .sum h2{color:#fff;margin-bottom:8px}
+  .sum .n{font-size:44px;font-weight:700;font-family:'Source Serif 4',Georgia,serif;line-height:1}
+  .sum p{color:#c9d8ea;font-size:14.5px}
+  footer{border-top:1px solid var(--line);padding:22px 0 40px;font-size:13px;color:var(--muted)}
+  footer p{margin-bottom:8px}
+  .hide{display:none}
+  @media(max-width:520px){.card{padding:17px}.btns .btn{flex:1;text-align:center}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">Hürriyetçi Yerel-Sen · İzmir</div>
+    <h1>Hakkını Tara</h1>
+    <p class="tag">Özlük dosyanızda kullanılmamış bir hak var mı? Birkaç dakikada kontrol edin, dilekçenizi doğru muhatabıyla hazır alın.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 0: INTRO + STATÜ -->
+<section id="s0">
+  <div class="card">
+    <h2>Bu tarama ne yapar?</h2>
+    <p>Kamuda birçok hak <strong>kendiliğinden işlemez — yazılı talep gerekir.</strong> Üst öğrenim intibakı, hizmet birleştirme, aile yardımı bildirimi, dil tazminatı, yıpranma payı, disiplin cezasının silinmesi… Dilekçe verilmezse hak orada bekler, çoğu zaman emekli olana kadar.</p>
+    <div class="note"><strong>Hiçbir veriniz kaydedilmiyor.</strong> Sorular tarayıcınızda çalışır; cevaplarınız hiçbir yere gönderilmez, kimse göremez. Sayfayı kapattığınızda hepsi silinir.</div>
+    <label class="fl">Önce statünüz</label>
+    <select id="statu">
+      <option value="">— seçiniz —</option>
+      <option value="memur">Memur (657 sayılı Kanun'a tabi)</option>
+      <option value="sozlesmeli">Sözleşmeli personel</option>
+      <option value="isci">İşçi (belediye kadrolu işçisi)</option>
+      <option value="sirket">Belediye şirketi personeli (ESHOT, İZSU, İZENERJİ vb. dahil)</option>
+    </select>
+    <p class="small">Statü belirleyici: tarama kalemlerinin çoğu 657 sayılı Kanun'dan doğuyor ve yalnız memurlara uygulanıyor. Yanlış statüyle yanlış dilekçe üretmemek için bunu başta soruyoruz.</p>
+    <div class="btns"><button class="btn" id="go0" disabled>Devam</button></div>
+  </div>
+</section>
+
+<!-- 1: MODÜL + DAİRE -->
+<section id="s1" class="hide">
+  <div class="card">
+    <div id="statuNote"></div>
+    <h2>Neyi taralım?</h2>
+    <p class="small" style="margin-bottom:16px">İstediğiniz kadar modül seçin. Çekirdek tarama her zaman açık.</p>
+    <div class="mods" id="mods"></div>
+    <label class="fl" style="margin-top:20px">Daire Başkanlığınız (dilekçelerde kullanılacak)</label>
+    <select id="daire"><option value="">— seçiniz (isteğe bağlı) —</option></select>
+    <div class="btns"><button class="btn" id="go1">Taramaya başla</button><button class="btn ghost" id="back1">← Geri</button></div>
+  </div>
+</section>
+
+<!-- 2: SORULAR -->
+<section id="s2" class="hide">
+  <div class="card">
+    <div class="prog"><i id="bar"></i></div>
+    <div class="step" id="stepno"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="qhelp" id="qhelp"></div>
+    <div class="opts" id="opts"></div>
+    <div class="btns"><button class="btn ghost sm" id="back2">← Geri</button></div>
+  </div>
+</section>
+
+<!-- 3: SONUÇ -->
+<section id="s3" class="hide">
+  <div class="sum">
+    <div class="n" id="count">0</div>
+    <h2>kalem kontrol edilmeli</h2>
+    <p id="sumtext"></p>
+  </div>
+  <div id="findings"></div>
+  <div class="card">
+    <h3>Herkesin bilmesi gerekenler</h3>
+    <p class="small">Tarama sormadığı ama sık kaçan kalemler:</p>
+    <ul class="small">
+      <li><strong>Ölüm yardımı ödeneği (657 m.208):</strong> memur olmayan eşin veya aile yardımına hak kazanan çocuğun vefatı hâlinde ödenir, ancak <strong>dilekçeyle talep edilmesi gerekir</strong> — kendiliğinden ödenmez. Anne veya babanın vefatı bu kapsamda değildir. Eş de memursa bu ödeme yapılmaz.</li>
+      <li><strong>Doğum yardımı ödeneği (657 m.207) 2015'te yürürlükten kaldırılmıştır.</strong> Bugünkü doğum yardımı farklı bir mevzuata dayanır ve memurlar da yararlanır — başvurusu kurumunuza değil ilgili bakanlık birimine yapılır.</li>
+      <li><strong>Evlilik ve ölüm mazeret izni:</strong> kendinizin veya çocuğunuzun evlenmesi, eşinizin, çocuğunuzun, kendinizin veya eşinizin ana, baba ve kardeşinin ölümü hâlinde 7 gün. Büyükanne ve büyükbaba bu listede yoktur.</li>
+      <li><strong>Yıllık izin:</strong> hizmeti 1–10 yıl olanlar için 20 gün, 10 yıldan fazla olanlar için 30 gün.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Sırada ne var?</h3>
+    <p class="small">Dilekçeleri köşeli parantezli yerleri doldurup iki nüsha hâlinde evrak birimine verin ve <strong>mutlaka kayıt numarası alın.</strong> Yazılı cevap gelmezse süre işlemeye başlar; cevabı sendika temsilcinize gösterin.</p>
+    <div class="btns"><button class="btn ghost" id="again">Yeniden tara</button></div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  <p><strong>Dayanaklar:</strong> 657 sayılı Devlet Memurları Kanunu (md. 36, 37, 104, 105, 108, 133, 202–208), 5510 sayılı Kanun (md. 40, 41), 193 sayılı Gelir Vergisi Kanunu (md. 31), 375 sayılı KHK (md. 2), 6331 sayılı İş Sağlığı ve Güvenliği Kanunu (md. 4, 15, 17, 18, 20).</p>
+  <p>Birim adları İzmir Büyükşehir Belediyesi Teşkilat Şeması'ndan alınmıştır (Meclisin 17.09.2026 gün ve 1066 sayılı kararı ile onaylı).</p>
+  <p>Bilgilendirme amaçlıdır; kişiye özel hukuki danışmanlık yerine geçmez. Tutar, gösterge ve katsayılar yıl içinde değiştiği için bu sayfada tutar belirtilmez.</p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+
+/* ---------- İBB daire başkanlıkları (17.09.2026 şeması) ---------- */
+var DAIRE=[
+ "İmar ve Şehircilik Dairesi Başkanlığı",
+ "Akıllı Şehir ve Kent Bilgi Sistemleri Dairesi Başkanlığı",
+ "Bilgi İşlem Dairesi Başkanlığı",
+ "Mali Hizmetler Dairesi Başkanlığı",
+ "Satınalma Dairesi Başkanlığı",
+ "Dış İlişkiler Dairesi Başkanlığı",
+ "Yazı İşleri ve Kararlar Dairesi Başkanlığı",
+ "Strateji Geliştirme Dairesi Başkanlığı",
+ "İşletme ve İştirakler Dairesi Başkanlığı",
+ "Makine İkmal, Bakım ve Onarım Dairesi Başkanlığı",
+ "Mezarlıklar Dairesi Başkanlığı",
+ "Çevre Koruma ve Kontrol Dairesi Başkanlığı",
+ "Zabıta Dairesi Başkanlığı",
+ "İtfaiye Dairesi Başkanlığı",
+ "Destek Hizmetleri Dairesi Başkanlığı",
+ "Kentsel Dönüşüm Dairesi Başkanlığı",
+ "Yapı Kontrol Dairesi Başkanlığı",
+ "Afet İşleri ve Risk Yönetimi Dairesi Başkanlığı",
+ "Emlak ve İstimlak Dairesi Başkanlığı",
+ "Fen İşleri Dairesi Başkanlığı",
+ "Yol Yapım Bakım ve Onarım Dairesi Başkanlığı",
+ "Park ve Bahçeler Dairesi Başkanlığı",
+ "Muhtarlık İşleri Dairesi Başkanlığı",
+ "Tarımsal Hizmetler Dairesi Başkanlığı",
+ "İklim Değişikliği ve Sıfır Atık Dairesi Başkanlığı",
+ "Kırsal Hizmetler Dairesi Başkanlığı",
+ "Kent Tarihi, Tanıtım ve Turizm Dairesi Başkanlığı",
+ "Ulaşım Dairesi Başkanlığı",
+ "Raylı Sistemler Dairesi Başkanlığı",
+ "Etüt ve Projeler Dairesi Başkanlığı",
+ "İnsan Kaynakları ve Eğitim Dairesi Başkanlığı",
+ "Kültür, Sanat ve Sosyal İşler Dairesi Başkanlığı",
+ "Sosyal Hizmetler Dairesi Başkanlığı",
+ "Veteriner İşleri Dairesi Başkanlığı",
+ "Sağlık İşleri Dairesi Başkanlığı",
+ "Eşrefpaşa Hastanesi Başhekimliği",
+ "Kadın ve Aile Hizmetleri Dairesi Başkanlığı",
+ "Gençlik ve Spor Hizmetleri Dairesi Başkanlığı",
+ "Basın Yayın ve Halkla İlişkiler Dairesi Başkanlığı",
+ "Özel Kalem Müdürlüğü",
+ "İç Denetim Birimi Başkanlığı",
+ "1. Hukuk Müşavirliği",
+ "Rehberlik ve Teftiş Kurulu Başkanlığı",
+ "Diğer / listede yok"
+];
+
+/* ---------- Modüller ---------- */
+var MODS=[
+ {id:"core",n:"Çekirdek tarama",d:"Derece, intibak, hizmet birleştirme, yıpranma payı, disiplin kaydı, vergi indirimi.",memurOnly:true,always:true},
+ {id:"mal", n:"Maaş ve ödenek kalemleri",d:"Aile yardımı bildirimi, eş ve çocuk yardımı, dil tazminatı.",memurOnly:true},
+ {id:"izin",n:"İzin hakları",d:"Refakat, süt, babalık, engelli çocuk izni, görev kazası sonrası izin.",memurOnly:true},
+ {id:"isg", n:"İş sağlığı ve güvenliği",d:"Eğitim, periyodik muayene, koruyucu donanım, çalışan temsilcisi. Her statü için geçerli.",memurOnly:false}
+];
+
+/* ---------- Muhataplar ---------- */
+var MUH_OZLUK="İNSAN KAYNAKLARI VE EĞİTİM DAİRESİ BAŞKANLIĞI\nMemur Personel Şube Müdürlüğüne";
+var MUH_MAAS ="İNSAN KAYNAKLARI VE EĞİTİM DAİRESİ BAŞKANLIĞI\nMaaş Tahakkuk Şube Müdürlüğüne";
+var MUH_ISG  ="SAĞLIK İŞLERİ DAİRESİ BAŞKANLIĞI\nİş Sağlığı ve Güvenliği Şube Müdürlüğüne";
+function hdr(m){return "T.C.\nİZMİR BÜYÜKŞEHİR BELEDİYE BAŞKANLIĞI\n"+m+"\n\n";}
+var FTR="\n\nGereğini bilgilerinize arz ederim.\n\nTarih: [GG/AA/YYYY]\nAd Soyad: [AD SOYAD]\nSicil No: [SİCİL NO]\nDaire/Birim: [DAİRE] / [ŞUBE MÜDÜRLÜĞÜ]\nUnvan: [UNVAN]\nİmza:\n";
+
+/* ---------- Sorular ---------- */
+var Q=[
+ /* çekirdek */
+ {m:"core",id:"giris",t:"Memuriyete ilk başladığınızda öğrenim durumunuz neydi?",h:"Göreve başladığınız andaki diplomanız.",
+  o:[["ilk","İlkokul / ortaokul"],["lise","Lise"],["meslek","Meslek lisesi / teknik lise"],["onlisans","Ön lisans"],["lisans","Lisans"],["ustu","Yüksek lisans veya üstü"]]},
+ {m:"core",id:"ust",t:"Memur olduktan sonra daha üst bir öğrenimi bitirdiniz mi?",h:"Açıköğretim, lisans tamamlama, DGS, ön lisans — hepsi sayılır.",
+  o:[["e","Evet, bitirdim"],["h","Hayır"]]},
+ {m:"core",id:"ust_talep",t:"O diplomayı kurumunuza verip yazılı intibak talebinde bulundunuz mu?",h:"Diplomayı göstermek yeterli değil; yazılı talep gerekir.",
+  if:function(a){return a.ust==="e";},o:[["e","Evet, dilekçe verdim ve sonuç yazısı geldi"],["h","Hayır"],["b","Emin değilim"]]},
+ {m:"core",id:"yl",t:"Yüksek lisans (master) diplomanız var mı?",o:[["e","Evet"],["h","Hayır"]]},
+ {m:"core",id:"yl_k",t:"Yüksek lisans için 1 kademe ilerlemesi uygulandı mı?",if:function(a){return a.yl==="e";},o:[["e","Evet"],["h","Hayır"],["b","Bilmiyorum"]]},
+ {m:"core",id:"dr",t:"Mesleğinizle ilgili bir alanda doktora yaptınız mı?",o:[["e","Evet"],["h","Hayır"]]},
+ {m:"core",id:"dr_d",t:"Doktora için 1 derece yükselmesi uygulandı mı?",if:function(a){return a.dr==="e";},o:[["e","Evet"],["h","Hayır"],["b","Bilmiyorum"]]},
+ {m:"core",id:"onceki",t:"Memuriyetten önce SSK (4/a) veya Bağ-Kur (4/b) kapsamında çalıştınız mı?",h:"Özel sektör, geçici işçilik, esnaflık dönemleri.",o:[["e","Evet"],["h","Hayır"]]},
+ {m:"core",id:"birl",t:"Bu hizmetlerin birleştirilmesi için SGK'ya dilekçe verdiniz mi?",h:"Otomatik birleşmez; başvuru usulü geçerlidir.",if:function(a){return a.onceki==="e";},o:[["e","Evet"],["h","Hayır"],["b","Bilmiyorum"]]},
+ {m:"core",id:"ask",t:"Muvazzaf askerlik hizmetiniz var mı?",o:[["e","Evet"],["h","Hayır / tabi değilim"]]},
+ {m:"core",id:"ask_b",t:"Askerlik sürenizi SGK'ya borçlandınız mı?",h:"Borçlanma ücretlidir; tarama bunu yalnız 'değerlendir' diye işaretler.",if:function(a){return a.ask==="e";},o:[["e","Evet"],["h","Hayır"],["b","Bilmiyorum"]]},
+ {m:"core",id:"dis8",t:"Son sekiz yıl içinde herhangi bir disiplin cezası aldınız mı?",o:[["h","Hayır"],["e","Evet"],["b","Bilmiyorum"]]},
+ {m:"core",id:"eski",t:"Özlük dosyanızda eski bir disiplin cezası var mı?",h:"Süresi geçen cezalar talep üzerine silinir — ama talep etmek gerekir.",
+  o:[["uyarma","Evet — uyarma veya kınama, 5 yıldan fazla oldu"],["agir","Evet — aylıktan kesme veya kademe durdurma, 10 yıldan fazla oldu"],["yeni","Evet ama daha yeni"],["h","Hayır"]]},
+ {m:"core",id:"is",t:"Fiilen yaptığınız iş aşağıdakilerden hangisine en yakın?",h:"Kadro unvanınız değil, günlük olarak fiilen yaptığınız iş.",
+  o:[["yangin","Yangın söndürme / itfaiye müdahale"],["saha","Saha, ağır veya tehlikeli iş (yol, asfalt, atık, park-bahçe, mezarlık, kanal)"],["atolye","Atölye / teknik bakım-onarım (makine, elektrik, sinyal, araç)"],["surucu","Araç veya iş makinesi sürücülüğü"],["zabita","Zabıta"],["saglik","Sağlık hizmeti"],["buro","Büro / masa başı"]]},
+ {m:"core",id:"eng",t:"Sizde, eşinizde veya bakmakla yükümlü olduğunuz çocuğunuzda, annenizde ya da babanızda %40 ve üzeri engel oranı gösteren sağlık kurulu raporu var mı?",o:[["e","Evet"],["h","Hayır"]]},
+ {m:"core",id:"eng_v",t:"Bunun için gelir vergisi indirimi başvurusu yapıldı mı?",h:"Bordronuzda matrahtan indirim görünüyor mu?",if:function(a){return a.eng==="e";},o:[["e","Evet, uygulanıyor"],["h","Hayır"],["b","Bilmiyorum"]]},
+
+ /* maaş */
+ {m:"mal",id:"evli",t:"Evli misiniz veya bakmakla yükümlü olduğunuz çocuğunuz var mı?",o:[["e","Evet"],["h","Hayır"]]},
+ {m:"mal",id:"bildirim",t:"Evlendikten veya çocuğunuz doğduktan sonra kuruma Aile Yardımı Bildirimi verdiniz mi?",h:"Aile yardımı otomatik tahakkuk etmez; bildirim gerekir.",if:function(a){return a.evli==="e";},o:[["e","Evet, verdim"],["h","Hayır"],["b","Emin değilim"]]},
+ {m:"mal",id:"es",t:"Eşiniz menfaat karşılığı çalışmıyor ve herhangi bir sosyal güvenlik kuruluşundan aylık almıyor mu?",h:"Eş yardımının temel koşulu budur. Eşin işsizlik ödeneği alması engel değildir.",if:function(a){return a.evli==="e";},o:[["e","Evet, çalışmıyor"],["h","Hayır, çalışıyor veya aylık alıyor"],["y","Eşim yok"]]},
+ {m:"mal",id:"c06",t:"0–6 yaş arası çocuğunuz var mı?",h:"Bu yaş grubunda çocuk yardımı artırımlı uygulanır.",if:function(a){return a.evli==="e";},o:[["e","Evet"],["h","Hayır"]]},
+ {m:"mal",id:"uvey",t:"Geçimini sağladığınız üvey çocuğunuz var mı?",if:function(a){return a.evli==="e";},o:[["e","Evet"],["h","Hayır"]]},
+ {m:"mal",id:"yds",t:"YDS veya e-YDS sınavından 70 ya da üzeri puanınız var mı?",h:"Yalnız YDS ve e-YDS geçerli; YÖKDİL, TOEFL ve ÜDS tazminata esas alınmaz.",o:[["e","Evet"],["h","Hayır"],["b","Girdim ama puanımı hatırlamıyorum"]]},
+ {m:"mal",id:"yds_o",t:"Yabancı dil tazminatı ödeniyor mu?",if:function(a){return a.yds==="e";},o:[["e","Evet, bordroda görünüyor"],["h","Hayır"],["b","Bilmiyorum"]]},
+ {m:"mal",id:"yds_5",t:"Sınava gireli 5 yıldan fazla oldu mu?",h:"Sonuçlar 5 yıl geçerli; süre dolunca seviye bir alt düzeye iner.",if:function(a){return a.yds==="e";},o:[["e","Evet, 5 yıldan fazla"],["h","Hayır, daha yeni"]]},
+
+ /* izin */
+ {m:"izin",id:"refakat",t:"Bakmakla yükümlü olduğunuz ana, baba, eş, çocuk veya kardeşiniz ağır hastalık ya da kaza nedeniyle sürekli bakıma mı ihtiyaç duyuyor?",
+  o:[["e","Evet"],["h","Hayır"]]},
+ {m:"izin",id:"refakat_k",t:"Refakat izni kullandınız mı?",if:function(a){return a.refakat==="e";},o:[["e","Evet, kullandım"],["h","Hayır"],["r","Talep ettim ama reddedildi"]]},
+ {m:"izin",id:"kaza",t:"Görev sırasında bir kazaya uğradınız, göreviniz nedeniyle saldırıya maruz kaldınız veya işinizin niteliği gereği bir meslek hastalığına tutuldunuz mu?",
+  o:[["e","Evet"],["h","Hayır"]]},
+ {m:"izin",id:"babalik",t:"Eşiniz yakın zamanda doğum yaptı mı veya yapacak mı?",o:[["e","Evet"],["h","Hayır / ilgili değil"]]},
+ {m:"izin",id:"sut",t:"Doğum sonrası analık izni biten veya bitmek üzere olan kadın memur musunuz?",o:[["e","Evet"],["h","Hayır"]]},
+ {m:"izin",id:"eng_cocuk",t:"En az %70 oranında engelli veya süreğen hastalığı olan çocuğunuz var mı?",o:[["e","Evet"],["h","Hayır"]]},
+ {m:"izin",id:"yillik",t:"Geçen yıldan kullanmadığınız yıllık izniniz var mı?",o:[["e","Evet, birikmiş iznim var"],["h","Hayır"],["b","Bilmiyorum"]]},
+
+ /* isg */
+ {m:"isg",id:"isg_eg",t:"İş sağlığı ve güvenliği eğitimi aldınız mı?",h:"Belgelendirilmiş, mesai içinde ve ücretsiz verilen eğitim.",
+  o:[["e","Evet, aldım ve belgesi var"],["h","Hayır, hiç almadım"],["eski","Aldım ama yenileme periyodu geçti"],["b","Hatırlamıyorum / belge verilmedi"]]},
+ {m:"isg",id:"muayene",t:"Periyodik sağlık muayenesinden geçirildiniz mi?",h:"İşe giriş ve periyodik muayene işverenin yükümlülüğü.",
+  o:[["e","Evet, düzenli yapılıyor"],["h","Hayır, hiç yapılmadı"],["eski","Yapıldı ama uzun zaman oldu"],["b","Bilmiyorum"]]},
+ {m:"isg",id:"kkd",t:"Göreviniz kişisel koruyucu donanım gerektiriyorsa, bunlar ücretsiz verilip zimmetleniyor mu?",
+  o:[["e","Evet, veriliyor ve zimmetli"],["h","Hayır, verilmiyor veya eksik"],["yok","Görevim koruyucu donanım gerektirmiyor"]]},
+ {m:"isg",id:"temsilci",t:"Biriminizde iş sağlığı ve güvenliği çalışan temsilcisi seçildi mi?",h:"Kim olduğunu biliyor musunuz?",
+  o:[["e","Evet, biliyorum"],["h","Hayır, seçilmedi"],["b","Bilmiyorum"]]},
+ {m:"isg",id:"risk",t:"Biriminizde risk değerlendirmesi yapıldı ve sonuçları size bildirildi mi?",
+  o:[["e","Evet"],["h","Hayır"],["b","Bilmiyorum"]]},
+ {m:"isg",id:"mes_eg",t:"Tehlikeli veya çok tehlikeli sınıfta bir işte çalışıyorsanız, yaptığınız işle ilgili mesleki eğitim belgeniz var mı?",
+  o:[["e","Evet, belgem var"],["h","Hayır, belgem yok"],["yok","Bu kapsamda değilim / bilmiyorum"]]}
+];
+
+/* ---------- Bulgular ---------- */
+var F={
+ozluk:{m:"core",lvl:"info",t:"Özlük bilgi talebi — her taramanın ilk adımı",w:"İnsan Kaynakları ve Eğitim Dairesi Başkanlığı, Memur Personel Şube Müdürlüğü",l:"4982 sayılı Bilgi Edinme Hakkı Kanunu / 657 sayılı Kanun",
+y:"Hangi hakkınızın eksik olduğunu anlamanın tek kesin yolu kurumun kayıtlarını <strong>yazılı olarak</strong> almaktır. Sözlü bilgi işe yaramaz; yazılı cevap hem dayanak olur hem itiraz süresini başlatır. Bunu diğer her şeyden önce verin.",
+d:hdr(MUH_OZLUK)+"Konu: Özlük ve hizmet bilgilerimin yazılı olarak bildirilmesi talebi\n\nAşağıdaki bilgilerin tarafıma yazılı olarak bildirilmesini talep ederim:\n\n1. Hâlen uygulanan kazanılmış hak aylığı derece ve kademem,\n2. Emekli keseneğine esas aylık derece ve kademem,\n3. Göreve başlangıç tarihim itibarıyla esas alınan öğrenim durumum ve giriş derece-kademem,\n4. Özlük dosyamda kayıtlı öğrenim belgelerimin listesi,\n5. Bugüne kadar tarafıma uygulanan ilave derece ve kademelerin dayanakları,\n6. Hizmet cetvelimin (birleştirilmiş süreler dâhil) bir örneği,\n7. Adıma fiilî hizmet süresi zammı bildirimi yapılıp yapılmadığı, yapıldıysa hangi tarihten itibaren ve hangi bent kapsamında yapıldığı."+FTR},
+
+intibak:{m:"core",lvl:"high",t:"Üst öğrenim intibakı yapılmamış olabilir",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 36/A-12-d",
+y:"Memuriyette iken üst öğrenimi bitirenler için intibak hakkı var: emsalinin ulaştığı derece ve kademeyi aşmamak kaydıyla, bitirilen üst öğrenimin giriş derece-kademesine, memuriyette geçirilen başarılı hizmet sürelerinin tamamı <strong>her yıl bir kademe, her üç yıl bir derece</strong> hesabıyla eklenir.<br><br><strong>Kritik:</strong> bu işlem kendiliğinden yapılmaz — diploma kuruma ibraz edilip talepte bulunulması üzerine yapılır. En sık kaçan kalem budur. Etkisi hem maaşa hem emekli aylığına yansır.",
+d:hdr(MUH_OZLUK)+"Konu: Üst öğrenim intibakı talebi\n\nMemuriyete [GİRİŞ TARİHİ] tarihinde [GİRİŞTEKİ ÖĞRENİM DURUMU] mezunu olarak başladım.\n\n[MEZUNİYET TARİHİ] tarihinde [OKUL / BÖLÜM ADI] mezunu olarak bir üst öğrenimi tamamlamış bulunmaktayım. Diplomamın örneği ekte sunulmuştur.\n\n657 sayılı Kanun'un 36/A-12-d maddesi uyarınca, bitirdiğim üst öğrenim esas alınarak derece ve kademe intibakımın yapılmasını; intibak sonucunun, hesaplama tablosunun ve intibak sonrası kazanılmış hak aylığı ile emekli keseneğine esas derece-kademe bilgilerimin tarafıma yazılı olarak bildirilmesini talep ederim.\n\nİntibakın yapılmaması hâlinde gerekçesinin yazılı bildirilmesini de ayrıca talep ederim."+FTR+"\nEK: Diploma fotokopisi, transkript"},
+
+yl:{m:"core",lvl:"med",t:"Yüksek lisans için kademe ilerlemesi uygulanmamış olabilir",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 36/A-9",
+y:"Memurluğa girmeden önce veya memuriyetleri sırasında yüksek öğrenim üstü master derecesi alanlara <strong>bir kademe ilerlemesi</strong> uygulanır. Diploma dosyada olsa bile işlem yapılmamış olabilir.",
+d:hdr(MUH_OZLUK)+"Konu: Yüksek lisans nedeniyle kademe ilerlemesi talebi\n\n[MEZUNİYET TARİHİ] tarihinde [ÜNİVERSİTE / PROGRAM] yüksek lisans programından mezun oldum. Diplomamın örneği ektedir.\n\n657 sayılı Kanun'un 36/A-9 maddesi uyarınca tarafıma bir kademe ilerlemesi uygulanıp uygulanmadığının; uygulanmamışsa uygulanmasının ve sonucun yazılı bildirilmesini talep ederim."+FTR+"\nEK: Diploma fotokopisi"},
+
+dr:{m:"core",lvl:"med",t:"Doktora için derece yükselmesi uygulanmamış olabilir",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 36/A-9",
+y:"Mesleği ile ilgili öğrenim dallarında doktora yapanlara <strong>bir derece yükselmesi</strong> uygulanır. Doktoranın kadro göreviniz ve hizmet sınıfınızla ilgili olması değerlendirmede esas alınır.",
+d:hdr(MUH_OZLUK)+"Konu: Doktora nedeniyle derece yükselmesi talebi\n\n[MEZUNİYET TARİHİ] tarihinde [ÜNİVERSİTE / ANABİLİM DALI] doktora programını tamamladım. Diplomamın örneği ektedir.\n\nSöz konusu doktora, yürüttüğüm [UNVAN] görevi ve tabi olduğum hizmet sınıfı ile ilgilidir. 657 sayılı Kanun'un 36/A-9 maddesi uyarınca bir derece yükselmesi uygulanmasını, uygulanmaması hâlinde gerekçesinin yazılı bildirilmesini talep ederim."+FTR+"\nEK: Diploma fotokopisi"},
+
+birl:{m:"core",lvl:"high",t:"Memuriyet öncesi hizmetleriniz birleştirilmemiş olabilir",w:"SGK İl Müdürlüğü (dilekçe veya e-Devlet)",l:"5510 sayılı Kanun",
+y:"Memuriyetten önceki 4/a (SSK) ve 4/b (Bağ-Kur) süreleri emeklilik hesabında değerlendirilebilir, ancak <strong>otomatik birleşmez — başvuru usulü geçerlidir.</strong> Birleştirme emeklilik tarihini öne çekebilir. Şimdi yapmanın maliyeti yok; emekliliğe yakın yapmak süreci uzatır.",
+d:"T.C.\nSOSYAL GÜVENLİK KURUMU\nİZMİR SOSYAL GÜVENLİK İL MÜDÜRLÜĞÜNE\n\nKonu: Hizmet birleştirme talebi\n\n[T.C. KİMLİK NO] T.C. kimlik numaralı sigortalınızım. Hâlen İzmir Büyükşehir Belediye Başkanlığı bünyesinde 4/c kapsamında [UNVAN] olarak görev yapmaktayım.\n\nMemuriyetimden önce 4/a (SSK) ve/veya 4/b (Bağ-Kur) kapsamında geçen hizmet sürelerimin, hâlen tabi olduğum hizmetimle birleştirilerek tek hizmet dosyasında toplanmasını; birleştirme sonucunun ve birleştirme sonrası toplam prim ödeme gün sayımın tarafıma yazılı olarak bildirilmesini talep ederim.\n\nEski sigorta numaralarım: [SSK NO] / [BAĞ-KUR NO]"+FTR+"\nEK: SGK hizmet dökümü, kimlik fotokopisi"},
+
+ask:{m:"core",lvl:"med",t:"Askerlik borçlanması değerlendirilmemiş",w:"SGK (e-Devlet → SGK → Askerlik Borçlanma Başvurusu)",l:"5510 sayılı Kanun md. 41",
+y:"Muvazzaf askerlik süresi borçlanılarak prim gün sayısına eklenebilir ve emeklilik tarihi öne çekilebilir. <strong>Ancak ücretli bir işlemdir</strong> ve maliyeti küçük değildir. Herkes için avantajlı olmayabilir — gün sayısı eksik kalanlar için anlamlıdır.",
+d:"— Bu kalem için dilekçe gerekmez.\n\nAdım 1: e-Devlet → SGK → \"Askerlik Borçlanma Başvurusu\" ekranından güncel borçlanma tutarınızı sorgulayın.\nAdım 2: e-Devlet → SGK → emeklilik hesaplama aracından emekliliğinize kaç prim günü eksik olduğunu görün.\nAdım 3: Borçlanma gerçekten emeklilik tarihinizi öne çekiyorsa başvurun; çekmiyorsa ödemenin faydası olmaz.\n\nKararsız kalırsanız hizmet dökümünüzle sendika temsilcinize gidin."},
+
+m37:{m:"core",lvl:"med",t:"Sekiz yıl disiplin cezası almamış olma durumunuz değerlendirilmeli",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 37",
+y:"657 sayılı Kanun'un 37. maddesi, belirli koşulları taşıyan ve sekiz yıl boyunca disiplin cezası almamış memurlara bir derece yükselmesi öngörür. Koşullar kişiye göre değiştiği için tarama bunu \"kesin hak\" değil <strong>kurumuna sorulması gereken kalem</strong> olarak işaretler.",
+d:hdr(MUH_OZLUK)+"Konu: 657 sayılı Kanun'un 37. maddesi kapsamında değerlendirme talebi\n\nBilgim dâhilinde son sekiz yıl içerisinde hakkımda herhangi bir disiplin cezası uygulanmamıştır.\n\n657 sayılı Kanun'un 37. maddesi kapsamında durumumun değerlendirilmesini; madde kapsamında bulunuyorsam bir derece yükselmesinin uygulanmasını, bulunmuyorsam hangi koşulun gerçekleşmediğinin yazılı bildirilmesini talep ederim."+FTR},
+
+silme:{m:"core",lvl:"med",t:"Eski disiplin cezası dosyadan silinebilir",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 133",
+y:"Uyarma ve kınama cezaları <strong>5 yıl</strong>, aylıktan kesme ile kademe ilerlemesinin durdurulması cezaları <strong>10 yıl</strong> sonra özlük dosyasından silinir — ancak <strong>memurun talebi üzerine.</strong> Talep etmezseniz ceza dosyada kalır. Görevde yükselme ve atama değerlendirmelerinde aleyhinize kullanılabileceği için önemlidir.",
+d:hdr(MUH_OZLUK)+"Konu: Disiplin cezasının özlük dosyasından silinmesi talebi\n\nHakkımda [CEZA TARİHİ] tarihinde [CEZA TÜRÜ: uyarma / kınama / aylıktan kesme / kademe ilerlemesinin durdurulması] cezası uygulanmıştır.\n\nSöz konusu cezanın uygulanmasından bu yana 657 sayılı Kanun'un 133. maddesinde öngörülen süre geçmiş bulunmaktadır. Anılan madde uyarınca cezanın özlük dosyamdan silinmesini ve silme işleminin tarafıma yazılı bildirilmesini talep ederim."+FTR},
+
+fhsz:{m:"core",lvl:"high",t:"Fiilî hizmet süresi zammı (yıpranma payı) kontrol edilmeli",w:"Önce kurumunuz (bildirimi yapan taraf), sonra SGK",l:"5510 sayılı Kanun md. 40",
+y:"Kapsamdaki iş ve işyerlerinde geçen çalışmaların <strong>her 360 günü için</strong> ilave prim günü eklenir. Eklenen süre belirli bir üst sınıra kadar prim ödeme gün sayısına eklenir ve <strong>yarısı, üç yılı geçmemek üzere emeklilik yaş hadlerinden indirilir.</strong> Birden fazla bende girenlere en yüksek bent uygulanır.<br><br><strong>En kritik nokta:</strong> kapsam kadro veya unvana göre değil, <strong>fiilen yapılan işe</strong> göre belirlenir. İtfaiyede bile tüm personel değil, yangın söndürme işlerinde fiilen çalışanlar yararlanır. Bu yüzden bildirimin yapılıp yapılmadığını yazılı sormak şart.",
+d:hdr(MUH_OZLUK)+"Konu: Fiilî hizmet süresi zammı bildirimi hakkında bilgi ve işlem talebi\n\nFiilen [FİİLEN YAPTIĞINIZ İŞİ AÇIK YAZIN] işini yürütmekteyim.\n\n5510 sayılı Kanun'un 40. maddesi kapsamında aşağıdakilerin yazılı bildirilmesini talep ederim:\n\n1. Adıma fiilî hizmet süresi zammı bildirimi yapılıp yapılmadığı,\n2. Yapılmışsa hangi tarihten itibaren ve 40. maddedeki hangi bent/alt iş kapsamında yapıldığı,\n3. Yapılmamışsa, fiilen yürüttüğüm işin anılan madde kapsamında değerlendirilip değerlendirilmediği ve gerekçesi,\n4. Kapsamda olduğu tespit edilirse geçmiş dönem bildirimlerinin düzeltilmesi için yapılacak işlem."+FTR},
+
+vergi:{m:"core",lvl:"high",t:"Engellilik gelir vergisi indirimi alınmıyor olabilir",w:"Vergi dairesi veya Dijital Vergi Dairesi; ardından Maaş Tahakkuk Şube Müdürlüğü",l:"193 sayılı Gelir Vergisi Kanunu md. 31",
+y:"Çalışma gücünde %40 ve üzeri kayıp bulunanlar ile <strong>bakmakla yükümlü olduğu engelli eşi, çocuğu, annesi veya babası bulunan çalışanlar</strong> engellilik indiriminden yararlanabilir. İndirim, derecesine göre belirlenen tutarın aylık gelir vergisi matrahından düşülmesiyle uygulanır ve <strong>doğrudan net maaşa yansır.</strong><br><br>Çok kişi raporu olduğu hâlde hiç başvurmamış durumda. İndirim, vergi dairesinden gelen yazının işverene ulaştığı ay itibarıyla başlar — <strong>başvuruyu geciktirmek doğrudan kayıptır.</strong> Aynı çocuk için her iki ebeveyn aynı anda yararlanamaz.",
+d:"— Başvuru vergi dairesine ya da Dijital Vergi Dairesi üzerinden yapılır.\n\nGEREKLİ BELGELER:\n• Başvuru dilekçesi\n• Engelli sağlık kurulu raporu\n• Kimlik fotokopisi\n• Kurumdan alınacak, ücret aldığınızı gösteren yazı\n• Yakını için başvuruluyorsa: bakmakla yükümlü olunduğunu gösteren belge\n\nDİLEKÇE:\n\n[VERGİ DAİRESİ MÜDÜRLÜĞÜNE]\n\nKonu: Engellilik indiriminden yararlanma talebi\n\n[T.C. KİMLİK NO] T.C. kimlik numaralı mükellefim. İzmir Büyükşehir Belediye Başkanlığı bünyesinde [UNVAN] olarak ücretli çalışmaktayım.\n\n[Kendim / eşim / çocuğum / annem / babam] adına düzenlenmiş engelli sağlık kurulu raporu ektedir.\n\n193 sayılı Gelir Vergisi Kanunu'nun 31. maddesi kapsamında engellilik indiriminden yararlandırılmam için gerekli işlemin yapılmasını ve sonucun çalıştığım kuruma bildirilmesini talep ederim.\n\nTarih: [GG/AA/YYYY]\nAd Soyad: [AD SOYAD]\nİmza:\n\nNOT: Yazı kuruma ulaştıktan sonra Maaş Tahakkuk Şube Müdürlüğünden uygulamanın başladığını bordronuzdan teyit edin."},
+
+/* maaş */
+aile:{m:"mal",lvl:"high",t:"Aile Yardımı Bildirimi verilmemiş olabilir",w:"Maaş Tahakkuk Şube Müdürlüğü",l:"657 sayılı Kanun md. 202–206",
+y:"Aile yardımı ödeneği <strong>memurdan otomatik olarak tahakkuk etmez</strong> — kuruma Aile Yardımı Bildirimi verilmesi gerekir. Hak, eş için evlendiği tarihi takip eden ay başından, çocuk için çocuğun doğduğu tarihi takip eden ay başından doğar; ama bildirim verilmezse ödeme başlamaz. Ödenek vergi ve kesintiye tabi değildir ve haczedilemez.",
+d:hdr(MUH_MAAS)+"Konu: Aile yardımı ödeneği bildirimi ve tahakkuk talebi\n\nAile durumuma ilişkin bilgiler aşağıdadır:\n\n• Medeni hâlim: [evli / bekâr] — Evlilik tarihi: [GG/AA/YYYY]\n• Eşimin çalışma durumu: [çalışmıyor / çalışıyor / aylık alıyor]\n• Çocuklarım: [AD — DOĞUM TARİHİ] (her biri için yazınız)\n\nEkte sunduğum Aile Yardımı Bildirimi ve belgeler çerçevesinde, 657 sayılı Kanun'un 202–206. maddeleri uyarınca aile yardımı ödeneğinin tahakkuk ettirilmesini; hâlen ödenmekte ise hangi kalemler üzerinden ve hangi tarihten itibaren ödendiğinin yazılı bildirilmesini talep ederim."+FTR+"\nEK: Aile Yardımı Bildirimi, nüfus kayıt örneği, eşin çalışma durumunu gösterir belge"},
+
+es:{m:"mal",lvl:"med",t:"Eş yardımı ödenmiyor olabilir",w:"Maaş Tahakkuk Şube Müdürlüğü",l:"657 sayılı Kanun md. 202",
+y:"Eş yardımında temel koşullar, eşin <strong>menfaat karşılığı çalışmaması</strong> ve <strong>herhangi bir sosyal güvenlik kuruluşundan aylık almamasıdır.</strong> Eşin işsizlik ödeneği alması bu ödeneğe engel değildir. Karı ve kocanın ikisi de memursa ödenek yalnız kocaya verilir.",
+d:hdr(MUH_MAAS)+"Konu: Eş için aile yardımı ödeneği talebi\n\nEşim [AD SOYAD] menfaat karşılığı çalışmamakta ve herhangi bir sosyal güvenlik kuruluşundan aylık almamaktadır.\n\n657 sayılı Kanun'un 202. maddesi uyarınca eş için aile yardımı ödeneğinin tarafıma ödenmesini; ödenmiyorsa gerekçesinin yazılı bildirilmesini talep ederim."+FTR+"\nEK: Eşin SGK tescil ve hizmet durumunu gösterir belge"},
+
+cocuk:{m:"mal",lvl:"med",t:"Çocuk yardımı eksik hesaplanıyor olabilir",w:"Maaş Tahakkuk Şube Müdürlüğü",l:"657 sayılı Kanun md. 202",
+y:"Çocuk yardımında sık kaçan üç durum var: <strong>0–6 yaş</strong> grubundaki çocuk için yardım artırımlı uygulanır; <strong>en az %40 engelli raporu</strong> bulunan çocuk için yardım artırımlı ödenir; <strong>geçimini sağladığınız üvey çocuk</strong> için de yardım ödenir. Bunların hiçbiri siz bildirmeden işlemez.",
+d:hdr(MUH_MAAS)+"Konu: Çocuk yardımının yeniden hesaplanması talebi\n\nBakmakla yükümlü olduğum çocuklarıma ilişkin bilgiler:\n\n[AD SOYAD] — Doğum tarihi: [GG/AA/YYYY] — Durum: [0-6 yaş / engelli raporu var / üvey çocuk]\n(her çocuk için ayrı satır)\n\n657 sayılı Kanun'un 202. maddesi ve ilgili mevzuat uyarınca çocuk yardımının yukarıdaki durumlar dikkate alınarak hesaplanmasını; hâlen hangi tutar ve hangi esasa göre ödendiğinin yazılı bildirilmesini talep ederim."+FTR+"\nEK: Nüfus kayıt örneği, varsa engelli sağlık kurulu raporu"},
+
+yds:{m:"mal",lvl:"high",t:"Yabancı dil tazminatı alınmıyor olabilir",w:"Maaş Tahakkuk Şube Müdürlüğü",l:"375 sayılı KHK md. 2",
+y:"YDS veya e-YDS'den <strong>en az 70 puan</strong> alanlara aylık yabancı dil tazminatı ödenir. <strong>Belge otomatik olarak sisteme düşmez</strong> — dilekçe ve sınav sonuç belgesiyle başvurmanız gerekir. Bu yüzden puanı olup hiç başvurmamış çok kişi var.<br><br>Önemli ayrıntılar: yalnız <strong>YDS ve e-YDS</strong> geçerlidir, YÖKDİL ve TOEFL tazminata esas alınmaz. Sonuçlar <strong>5 yıl</strong> geçerlidir; süre dolduğunda yeniden sınava girmeyenin seviyesi bir alt düzeye iner. Bildiğiniz <strong>her dil için ayrı</strong> tazminat alınabilir. Tutar, puan bandının gösterge rakamı ile memur aylık katsayısının çarpımıdır; katsayı yılda iki kez değiştiği için burada tutar verilmez.",
+d:hdr(MUH_MAAS)+"Konu: Yabancı dil tazminatı ödenmesi talebi\n\n[SINAV TARİHİ] tarihli [YDS / e-YDS] sınavının [DİL] dilinde [PUAN] puan aldım. Sonuç belgem ektedir.\n\n375 sayılı Kanun Hükmünde Kararname'nin 2. maddesi uyarınca tarafıma yabancı dil tazminatı ödenmesini; hâlen ödeniyorsa hangi gösterge üzerinden ve hangi tarihten itibaren ödendiğinin, ödenmiyorsa gerekçesinin yazılı bildirilmesini talep ederim."+FTR+"\nEK: YDS/e-YDS sonuç belgesi"},
+
+yds5:{m:"mal",lvl:"info",t:"Dil belgenizin 5 yıllık süresi dolmuş olabilir",w:"—",l:"375 sayılı KHK md. 2",
+y:"Sınav sonuçları 5 yıl geçerlidir. Süre dolduğunda yeniden sınava girmeyen personelin seviyesi <strong>bir alt düzeye inmiş sayılır</strong> ve tazminat buna göre düşer. Mevcut düzeyinizi korumak istiyorsanız sınava yeniden girmeniz gerekir.",
+d:"— Dilekçe gerektirmez.\n\nSınav tarihinizin üzerinden 5 yıl geçtiyse, mevcut tazminat düzeyinizi korumak için YDS veya e-YDS'ye yeniden girmeniz gerekir. Bordronuzda dil tazminatı kaleminin tutarının düşüp düşmediğini kontrol edin."},
+
+/* izin */
+refakat:{m:"izin",lvl:"high",t:"Refakat izni hakkınız var — ama rapor doğru yazılmazsa reddedilir",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 105 son fıkra",
+y:"Bakmakla yükümlü olduğunuz <strong>ana, baba, eş, çocuk veya kardeşinizin</strong> ağır kaza ya da uzun süreli hastalığında, sağlık kurulu raporuyla belgelenmek kaydıyla <strong>aylık ve özlük haklarınız korunarak 3 aya kadar</strong> refakat izni verilir; gerekirse bir katına kadar uzatılır, aynı kişi ve aynı vakada toplam 6 ayı geçmez. Bu izin yıllık izninizden düşülmez. Aynı kişi için aynı dönemde birden fazla memur refakat izni kullanamaz. İzin sonrasında istek üzerine 18 aya kadar aylıksız izin de alınabilir (md. 108/A).<br><br><strong>Talepler çoğunlukla raporun eksikliğinden reddediliyor.</strong> Rapor şunların hepsini içermelidir: refakati gerektiren tıbbi sebepler; refakat edilmediği takdirde hayati tehlike bulunup bulunmadığı; sürekli ve yakın bakım gerekip gerekmediği; üç ayı geçmeyecek şekilde refakat süresi; varsa refakatçinin taşıması gereken özel nitelikler. <strong>Bunlardan biri eksikse rapora dayanılarak izin verilemez.</strong> Hastaneye giderken bu listeyi yanınızda götürün.",
+d:hdr(MUH_OZLUK)+"Konu: Refakat izni talebi\n\nBakmakla yükümlü olduğum [YAKINLIK: ana/baba/eş/çocuk/kardeş] [AD SOYAD], [HASTALIK/KAZA] nedeniyle sürekli ve yakın bakıma ihtiyaç duymaktadır. Durumu gösterir sağlık kurulu raporu ektedir.\n\n657 sayılı Kanun'un 105. maddesinin son fıkrası uyarınca [TALEP EDİLEN SÜRE] süreyle refakat izni verilmesini talep ederim.\n\nNOT (dilekçeye yazmayın, hastane için hatırlatma): Sağlık kurulu raporunda şunların açıkça yer alması gerekir —\n(1) refakati gerektiren tıbbi sebepler,\n(2) refakat edilmediği takdirde hayati tehlike bulunup bulunmadığı,\n(3) sürekli ve yakın bakım gerekip gerekmediği,\n(4) üç ayı geçmeyecek şekilde refakat süresi,\n(5) varsa refakatçide aranan özel nitelikler."+FTR+"\nEK: Sağlık kurulu raporu"},
+
+kaza:{m:"izin",lvl:"high",t:"Görev kazası / meslek hastalığı — süre sınırsız izin hakkı",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 105",
+y:"Görevi sırasında veya görevinden dolayı <strong>bir kazaya ya da saldırıya uğrayan veya bir meslek hastalığına tutulan memur, iyileşinceye kadar izinli sayılır.</strong> Bu durumda olağan hastalık izni süre sınırları (uzun süreli tedavi gerektiren hastalıklarda 18 ay, diğer hâllerde 12 ay) uygulanmaz.<br><br>Saha ve atölye birimlerinde bu ayrım sıkça gözden kaçıyor; olay \"normal hastalık izni\" olarak işleniyor ve memur süre sınırına takılıyor. Kazanın görevle bağlantısının kayda geçirilmesi bu yüzden kritik.",
+d:hdr(MUH_OZLUK)+"Konu: Görev sırasında meydana gelen kaza / meslek hastalığının kayda geçirilmesi ve izin talebi\n\n[OLAY TARİHİ] tarihinde, [BİRİM] biriminde görevim sırasında [OLAYI KISACA ANLATIN] şeklinde bir [kaza / saldırı / meslek hastalığı] durumu meydana gelmiştir.\n\n657 sayılı Kanun'un 105. maddesi uyarınca, görevi sırasında veya görevinden dolayı kazaya ya da saldırıya uğrayan veya meslek hastalığına tutulan memur iyileşinceye kadar izinli sayılmaktadır.\n\nBu çerçevede:\n1. Olayın görevle bağlantılı olarak kayda geçirilmesini,\n2. İzin işlemlerimin anılan madde kapsamında, süre sınırına tabi olmaksızın yürütülmesini,\n3. Olaya ilişkin tutanak ve kayıtların bir örneğinin tarafıma verilmesini talep ederim."+FTR+"\nEK: Hastane raporu, varsa olay tutanağı"},
+
+babalik:{m:"izin",lvl:"med",t:"Babalık izni — 10 gün, istek üzerine",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 104/B",
+y:"Eşinin doğum yapması hâlinde memura, <strong>isteği üzerine on gün babalık izni</strong> verilir. İstek üzerine verilir — talep etmezseniz kendiliğinden işlemez.",
+d:hdr(MUH_OZLUK)+"Konu: Babalık izni talebi\n\nEşim [AD SOYAD] [DOĞUM TARİHİ] tarihinde doğum yapmıştır / yapacaktır.\n\n657 sayılı Kanun'un 104/B maddesi uyarınca on gün babalık izni verilmesini talep ederim.\n\nKullanmak istediğim tarihler: [BAŞLANGIÇ] – [BİTİŞ]"+FTR+"\nEK: Doğum belgesi / hastane raporu"},
+
+sut:{m:"izin",lvl:"high",t:"Süt izni ve yarım gün çalışma — saatini siz belirlersiniz",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 104/D ve 104/F",
+y:"Kadın memura, doğum sonrası analık izninin bitiminden itibaren <strong>ilk altı ayda günde üç saat, ikinci altı ayda günde bir buçuk saat</strong> süt izni verilir. <strong>Süt izninin hangi saatler arasında ve günde kaç kez kullanılacağını memur belirler</strong> — amirin takdirinde değildir. Uygulamada en sık çiğnenen nokta budur.<br><br>Alternatif olarak (104/F) analık izni bitiminde başlamak üzere, ayrıca süt izni verilmeksizin, <strong>birinci doğumda iki ay, ikinci doğumda dört ay, sonraki doğumlarda altı ay</strong> süreyle günlük çalışma süresinin yarısı kadar çalışılabilir. İki haktan aynı anda yararlanılamaz; hangisinin işinize geldiğini önceden hesaplayın.",
+d:hdr(MUH_OZLUK)+"Konu: Süt izni kullanım saatlerinin bildirimi\n\nDoğum sonrası analık iznim [TARİH] tarihinde sona ermiştir.\n\n657 sayılı Kanun'un 104/D maddesi uyarınca süt iznimi aşağıdaki şekilde kullanacağımı bildiririm:\n\n• Kullanılacak saatler: [ÖRN. 08:00–09:30 ve 16:30–18:00]\n• Günlük kullanım sayısı: [ADET]\n\nAnılan madde uyarınca süt izninin hangi saatler arasında ve günde kaç kez kullanılacağı hususunda memurun tercihi esastır.\n\nGereğinin buna göre yapılmasını arz ederim."+FTR},
+
+eng_cocuk:{m:"izin",lvl:"med",t:"Engelli çocuk mazeret izni — yılda 10 güne kadar",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 104/E",
+y:"<strong>En az %70 oranında engelli ya da süreğen hastalığı olan çocuğun</strong> hastalanması hâlinde, hastalık raporuna dayanılarak <strong>anne veya babadan yalnız biri</strong> tarafından bir yıl içinde toplu veya bölümler hâlinde <strong>on güne kadar</strong> mazeret izni kullanılabilir. Bu izin yıllık izninizden ayrıdır.",
+d:hdr(MUH_OZLUK)+"Konu: Engelli çocuk mazeret izni talebi\n\nÇocuğum [AD SOYAD], [ORAN]% oranında engelli / süreğen hastalığı bulunan çocuk olup, [TARİH] tarihli hastalık raporu ektedir.\n\n657 sayılı Kanun'un 104/E maddesi uyarınca [GÜN SAYISI] gün mazeret izni verilmesini talep ederim.\n\nSöz konusu izin bu yıl içinde eşim tarafından kullanılmamıştır."+FTR+"\nEK: Engelli sağlık kurulu raporu, hastalık raporu"},
+
+yillik:{m:"izin",lvl:"info",t:"Birikmiş yıllık izninizin durumunu yazılı sorun",w:"Memur Personel Şube Müdürlüğü",l:"657 sayılı Kanun md. 102–103",
+y:"Hizmeti 1 yıldan 10 yıla kadar (10 yıl dâhil) olanlar için 20 gün, 10 yıldan fazla olanlar için 30 gün yıllık izin verilir. Devir ve kullanım kuralları nedeniyle birikmiş izinlerin bir kısmı yanabilir. Kaç gün izniniz kaldığını ve ne kadarının devrettiğini <strong>yazılı olarak</strong> öğrenin — sözlü bilgi sonradan dayanak olmaz.",
+d:hdr(MUH_OZLUK)+"Konu: Yıllık izin bakiyemin bildirilmesi talebi\n\nAşağıdaki bilgilerin tarafıma yazılı olarak bildirilmesini talep ederim:\n\n1. Toplam hizmet sürem esas alınarak hak ettiğim yıllık izin gün sayısı,\n2. Bugüne kadar kullandığım yıllık izin günleri (yıl yıl),\n3. Devreden ve hâlen kullanılabilir durumdaki izin bakiyem,\n4. Varsa hakkı düşmüş izin günleri ve bunların dayanağı."+FTR},
+
+/* İSG */
+isg_eg:{m:"isg",lvl:"high",t:"İş sağlığı ve güvenliği eğitimi verilmemiş veya yenilenmemiş",w:"Sağlık İşleri Dairesi Başkanlığı, İş Sağlığı ve Güvenliği Şube Müdürlüğü",l:"6331 sayılı Kanun md. 17",
+y:"İşveren, çalışanların iş sağlığı ve güvenliği eğitimlerini almasını sağlamakla yükümlüdür. Bu eğitim özellikle <strong>işe başlamadan önce, çalışma yeri veya iş değişikliğinde, iş ekipmanının değişmesi hâlinde veya yeni teknoloji uygulanması hâlinde</strong> verilir. Eğitim mesai içinde ve ücretsizdir; gideri ve süresi işvereni bağlar. Çalışan temsilcileri ayrıca özel olarak eğitilir.<br><br>Eğitim süreleri ve yenileme periyotları işyerinin tehlike sınıfına göre değişir. Bu bir bireysel hak talebi değil, <strong>işverenin yerine getirmediği bir yükümlülüğün tespitidir</strong> — bu yüzden toplu olarak daha etkilidir.",
+d:hdr(MUH_ISG)+"Konu: İş sağlığı ve güvenliği eğitimi hakkında bilgi ve işlem talebi\n\n[DAİRE] / [ŞUBE MÜDÜRLÜĞÜ] biriminde görev yapmaktayım.\n\n6331 sayılı Kanun'un 17. maddesi kapsamında aşağıdakilerin yazılı bildirilmesini talep ederim:\n\n1. Biriminin tabi olduğu tehlike sınıfı,\n2. Bu tehlike sınıfı için öngörülen temel eğitim süresi ve yenileme periyodu,\n3. Adıma kayıtlı iş sağlığı ve güvenliği eğitimlerinin tarihleri ve belgeleri,\n4. Yenileme periyodu geçmişse eğitimin ne zaman planlandığı,\n5. Eğitim kayıtlarımın bir örneğinin tarafıma verilmesi."+FTR},
+
+muayene:{m:"isg",lvl:"high",t:"Periyodik sağlık muayenesi yapılmamış olabilir",w:"İş Sağlığı ve Güvenliği Şube Müdürlüğü",l:"6331 sayılı Kanun md. 15",
+y:"Çalışanların işe girişte ve periyodik olarak sağlık muayenelerinden geçirilmesi <strong>işverenin yükümlülüğüdür.</strong> Periyot, işyerinin tehlike sınıfına göre belirlenir ve tehlike arttıkça aralık kısalır.<br><br>Bu kalem saha ve atölye birimlerinde kritik: muayene kaydı yoksa, ileride bir meslek hastalığı iddiasında <strong>durumunuzun işe başlamadan önce mi sonra mı oluştuğunu gösterecek hiçbir kayıt olmaz.</strong> Muayene sizin lehinize delildir; talep etmek sizin yararınızadır.",
+d:hdr(MUH_ISG)+"Konu: Sağlık gözetimi ve periyodik muayene hakkında bilgi ve işlem talebi\n\n[DAİRE] / [ŞUBE MÜDÜRLÜĞÜ] biriminde [UNVAN] olarak görev yapmaktayım. Fiilen yürüttüğüm iş: [İŞİ AÇIK YAZIN].\n\n6331 sayılı Kanun'un 15. maddesi kapsamında aşağıdakilerin yazılı bildirilmesini talep ederim:\n\n1. Biriminin tehlike sınıfı ve bu sınıf için öngörülen periyodik muayene aralığı,\n2. Adıma yapılmış işe giriş ve periyodik muayenelerin tarihleri,\n3. Muayene sonuçlarımın bir örneği,\n4. Periyot aşılmışsa muayenenin ne zaman yapılacağı,\n5. Yürüttüğüm iş bakımından yapılması gereken özel tetkikler varsa bunların neler olduğu."+FTR},
+
+kkd:{m:"isg",lvl:"high",t:"Kişisel koruyucu donanım verilmiyor veya zimmetlenmiyor",w:"İş Sağlığı ve Güvenliği Şube Müdürlüğü",l:"6331 sayılı Kanun",
+y:"Risk değerlendirmesi sonucunda belirlenen kişisel koruyucu donanımların <strong>ücretsiz sağlanması, kullanımının denetlenmesi ve zimmetlenmesi</strong> işverenin yükümlülüğüdür. Zimmet kaydı sadece idari bir formalite değil: bir kaza hâlinde donanımın verilip verilmediğini gösteren tek belgedir. Zimmetsiz teslim, sorumluluk tartışmasında <strong>çalışanın aleyhine</strong> işler.",
+d:hdr(MUH_ISG)+"Konu: Kişisel koruyucu donanım hakkında bilgi ve işlem talebi\n\n[DAİRE] / [ŞUBE MÜDÜRLÜĞÜ] biriminde fiilen [İŞİ AÇIK YAZIN] işini yürütmekteyim.\n\nAşağıdakilerin yazılı bildirilmesini talep ederim:\n\n1. Biriminin risk değerlendirmesine göre yürüttüğüm iş için belirlenmiş kişisel koruyucu donanımların listesi,\n2. Adıma zimmetlenmiş koruyucu donanımların dökümü ve teslim tarihleri,\n3. Kullanım ömrü dolmuş veya hiç teslim edilmemiş donanımların ne zaman temin edileceği.\n\nEksik tespit edilen donanımların temin edilmesini ve zimmet kayıtlarının tutulmasını talep ederim."+FTR},
+
+temsilci:{m:"isg",lvl:"med",t:"Çalışan temsilcisi seçilmemiş veya bilinmiyor",w:"İş Sağlığı ve Güvenliği Şube Müdürlüğü",l:"6331 sayılı Kanun md. 20",
+y:"İşveren, işyerinde belirtilen sayılarda <strong>çalışan temsilcisi görevlendirmekle</strong> yükümlüdür; çalışan sayısı arttıkça temsilci sayısı da artar. Birden fazla temsilci varsa aralarından baş temsilci belirlenir. Çalışan temsilcileri özel olarak eğitilir ve tehlike kaynağının yok edilmesi için işverene öneride bulunabilir.<br><br>Sendikal açıdan bu kalem önemli: çalışan temsilciliği, İSG konularını kurumla resmî zeminde konuşabileceğiniz tek yapısal kanaldır. Temsilci seçilmemişse bu kanal hiç açılmamış demektir.",
+d:hdr(MUH_ISG)+"Konu: Çalışan temsilcisi hakkında bilgi talebi\n\n[DAİRE] / [ŞUBE MÜDÜRLÜĞÜ] biriminde görev yapmaktayım.\n\n6331 sayılı Kanun'un 20. maddesi kapsamında aşağıdakilerin yazılı bildirilmesini talep ederim:\n\n1. Biriminde görevlendirilmiş iş sağlığı ve güvenliği çalışan temsilcisi bulunup bulunmadığı,\n2. Varsa temsilcinin adı ve nasıl belirlendiği,\n3. Birimdeki çalışan sayısına göre görevlendirilmesi gereken temsilci sayısı,\n4. Temsilci görevlendirilmemişse bu işlemin ne zaman yapılacağı,\n5. İş sağlığı ve güvenliği kurulu kurulması gerekiyorsa kurulun oluşturulup oluşturulmadığı."+FTR},
+
+risk:{m:"isg",lvl:"med",t:"Risk değerlendirmesi bildirilmemiş",w:"İş Sağlığı ve Güvenliği Şube Müdürlüğü",l:"6331 sayılı Kanun md. 16, 18",
+y:"İşveren risk değerlendirmesi yapmak, buna göre alınacak koruyucu ve önleyici tedbirler ile kullanılacak koruyucu donanımı belirlemek ve <strong>çalışanları bilgilendirmekle</strong> yükümlüdür; ayrıca çalışanların görüşlerini alıp katılımlarını sağlar. Risk değerlendirmesini görmeden hangi önlemin size ait olduğunu bilemezsiniz.",
+d:hdr(MUH_ISG)+"Konu: Risk değerlendirmesi hakkında bilgi talebi\n\n[DAİRE] / [ŞUBE MÜDÜRLÜĞÜ] biriminde görev yapmaktayım.\n\nAşağıdakilerin yazılı bildirilmesini talep ederim:\n\n1. Biriminde risk değerlendirmesi yapılıp yapılmadığı, yapıldıysa tarihi ve güncellenme durumu,\n2. Yürüttüğüm işe ilişkin belirlenmiş riskler ve bunlara karşı alınması öngörülen tedbirler,\n3. Bu tedbirlerden hâlen uygulanmayanlar ve uygulanma takvimi,\n4. Risk değerlendirmesinin beni ilgilendiren bölümünün bir örneği."+FTR},
+
+mes_eg:{m:"isg",lvl:"high",t:"Mesleki eğitim belgesi olmadan tehlikeli işte çalıştırılıyor olabilirsiniz",w:"İş Sağlığı ve Güvenliği Şube Müdürlüğü",l:"6331 sayılı Kanun md. 17/3",
+y:"Mesleki eğitim alma zorunluluğu bulunan <strong>tehlikeli ve çok tehlikeli sınıfta yer alan işlerde, yapacağı işle ilgili mesleki eğitim aldığını belgeleyemeyenler çalıştırılamaz.</strong><br><br>Bu kalem çift taraflı: belgeniz yoksa bu sizin kusurunuz değil, <strong>sizi o işte çalıştırmanın mevzuata aykırı olduğu</strong> anlamına gelir. Bir kaza hâlinde bu eksiklik sorumluluk değerlendirmesinde belirleyici olur. Talebi yazılı yapmak hem belgenin temin edilmesini sağlar hem de kaydı oluşturur.",
+d:hdr(MUH_ISG)+"Konu: Mesleki eğitim belgesi hakkında bilgi ve işlem talebi\n\n[DAİRE] / [ŞUBE MÜDÜRLÜĞÜ] biriminde fiilen [İŞİ AÇIK YAZIN] işini yürütmekteyim.\n\n6331 sayılı Kanun'un 17. maddesinin üçüncü fıkrası uyarınca, mesleki eğitim alma zorunluluğu bulunan tehlikeli ve çok tehlikeli sınıftaki işlerde, yapacağı işle ilgili mesleki eğitim aldığını belgeleyemeyenler çalıştırılamaz.\n\nBu çerçevede aşağıdakilerin yazılı bildirilmesini talep ederim:\n\n1. Fiilen yürüttüğüm işin mesleki eğitim zorunluluğu kapsamında olup olmadığı,\n2. Kapsamdaysa adıma kayıtlı mesleki eğitim belgesinin bulunup bulunmadığı,\n3. Belge yoksa, eğitimin ne zaman verileceği ve o tarihe kadar görevlendirmemin nasıl düzenleneceği."+FTR},
+
+koruma:{m:"isg",lvl:"info",t:"Başvurunuz nedeniyle hakkınız kısıtlanamaz",w:"—",l:"6331 sayılı Kanun md. 18/3",
+y:"Bu modüldeki dilekçeleri vermeden önce bilmeniz gereken madde: <strong>çalışanların veya çalışan temsilcilerinin, işyerinde iş sağlığı ve güvenliği için alınan önlemlerin yetersiz olduğu durumlarda veya teftiş sırasında yetkili makama başvurmalarından dolayı hakları kısıtlanamaz.</strong><br><br>Yani İSG eksikliğini yazılı olarak bildirmek korunan bir davranıştır. Dilekçenizi kayıt numarasıyla verin ve bir nüshasını saklayın — baskı hissederseniz elinizde hem talebin hem tarihin kaydı olur.",
+d:"— Dilekçe gerektirmez.\n\nBu modüldeki her dilekçeyi verirken:\n1. İki nüsha hazırlayın.\n2. Evrak biriminden kayıt numarası ve tarih alın.\n3. Kayıtlı nüshayı saklayın.\n4. Bir örneğini sendika temsilcinize verin.\n\nBu üç adım, hem talebinizin hem de ne zaman yapıldığının kaydını oluşturur."}
+};
+
+/* ---------- Durum ---------- */
+var a={},order=[],idx=0,sel={core:true},statu="",daire="";
+
+function initMods(){
+  var box=$("#mods"); box.innerHTML="";
+  MODS.forEach(function(m){
+    var locked = m.memurOnly && statu!=="memur";
+    var on = m.always ? !locked : !!sel[m.id];
+    if(locked) sel[m.id]=false; else if(m.always) sel[m.id]=true;
+    var el=document.createElement("label");
+    el.className="mod"+(on?" on":"")+(locked?" lock":"");
+    el.innerHTML='<input type="checkbox" '+(on?"checked":"")+(locked||m.always?" disabled":"")+'>'+
+      '<span><b>'+m.n+(locked?" — bu statüde uygulanmaz":"")+'</b><span>'+m.d+'</span></span>';
+    var cb=el.querySelector("input");
+    if(!locked && !m.always){
+      cb.onchange=function(){ sel[m.id]=cb.checked; el.classList.toggle("on",cb.checked); };
+    }
+    box.appendChild(el);
+  });
+  if(statu!=="memur" && statu){
+    sel.isg=true;
+    var i=box.querySelectorAll("input")[3]; if(i){i.checked=true; i.parentElement.classList.add("on");}
+  }
+}
+
+function statuNote(){
+  var n=$("#statuNote");
+  if(statu==="memur"){ n.innerHTML=""; return; }
+  var who = statu==="isci" ? "İşçi" : (statu==="sozlesmeli" ? "Sözleşmeli personel" : "Belediye şirketi personeli");
+  n.innerHTML='<div class="warn"><strong>'+who+' statüsündesiniz.</strong> Bu taramadaki derece, intibak, aile yardımı ve izin kalemleri 657 sayılı Devlet Memurları Kanunu\'ndan doğuyor ve sizin statünüze uygulanmıyor — haklarınız İş Kanunu ve varsa toplu iş sözleşmenizden geliyor. Yanlış dilekçe üretmemek için o modülleri kapattık.<br><br>Ancak <strong>iş sağlığı ve güvenliği modülü sizin için de geçerli:</strong> 6331 sayılı Kanun, çalışanları kendi özel kanunlarındaki statülerine bakmaksızın kamu ve özel ayrımı yapmadan kapsıyor. Özlük konuları için sendika temsilcinize gidin.</div>';
+}
+
+function visible(){ return Q.filter(function(q){ return sel[q.m] && (!q.if || q.if(a)); }); }
+
+function render(){
+  var L=visible();
+  if(idx>=L.length) return show();
+  var q=L[idx];
+  $("#stepno").textContent="Soru "+(idx+1)+" / "+L.length;
+  $("#bar").style.width=(idx/L.length*100)+"%";
+  $("#qtext").textContent=q.t;
+  var h=$("#qhelp"); h.textContent=q.h||""; h.style.display=q.h?"block":"none";
+  var box=$("#opts"); box.innerHTML="";
+  q.o.forEach(function(o){
+    var b=document.createElement("button");
+    b.className="opt"; b.type="button"; b.textContent=o[1];
+    b.onclick=function(){ a[q.id]=o[0]; idx++; render(); };
+    box.appendChild(b);
+  });
+  $("#back2").style.display=idx===0?"none":"inline-block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function collect(){
+  var r=[];
+  if(sel.core){
+    r.push("ozluk");
+    if(a.ust==="e"&&a.ust_talep!=="e") r.push("intibak");
+    if(a.yl==="e"&&a.yl_k!=="e") r.push("yl");
+    if(a.dr==="e"&&a.dr_d!=="e") r.push("dr");
+    if(a.onceki==="e"&&a.birl!=="e") r.push("birl");
+    if(a.ask==="e"&&a.ask_b!=="e") r.push("ask");
+    if(a.dis8==="h") r.push("m37");
+    if(a.eski==="uyarma"||a.eski==="agir") r.push("silme");
+    if(a.is==="yangin"||a.is==="saha"||a.is==="atolye"||a.is==="surucu") r.push("fhsz");
+    if(a.eng==="e"&&a.eng_v!=="e") r.push("vergi");
+  }
+  if(sel.mal){
+    if(a.evli==="e"&&a.bildirim!=="e") r.push("aile");
+    if(a.es==="e") r.push("es");
+    if(a.c06==="e"||a.uvey==="e"||a.eng==="e") r.push("cocuk");
+    if(a.yds==="e"&&a.yds_o!=="e") r.push("yds");
+    if(a.yds_5==="e") r.push("yds5");
+  }
+  if(sel.izin){
+    if(a.refakat==="e") r.push("refakat");
+    if(a.kaza==="e") r.push("kaza");
+    if(a.babalik==="e") r.push("babalik");
+    if(a.sut==="e") r.push("sut");
+    if(a.eng_cocuk==="e") r.push("eng_cocuk");
+    if(a.yillik==="e"||a.yillik==="b") r.push("yillik");
+  }
+  if(sel.isg){
+    r.push("koruma");
+    if(a.isg_eg!=="e") r.push("isg_eg");
+    if(a.muayene!=="e") r.push("muayene");
+    if(a.kkd==="h") r.push("kkd");
+    if(a.temsilci!=="e") r.push("temsilci");
+    if(a.risk!=="e") r.push("risk");
+    if(a.mes_eg==="h") r.push("mes_eg");
+  }
+  return r;
+}
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function mark(s){return esc(s).replace(/\[([^\]]+)\]/g,'<span class="ph">[$1]</span>');}
+
+var SEC={core:"Çekirdek tarama",mal:"Maaş ve ödenek kalemleri",izin:"İzin hakları",isg:"İş sağlığı ve güvenliği"};
+
+function show(){
+  var keys=collect();
+  var real=keys.filter(function(k){return k!=="ozluk"&&k!=="koruma";}).length;
+  $("#count").textContent=keys.length;
+  $("#sumtext").textContent = real===0
+    ? "Sorulardan belirgin bir eksik çıkmadı — yine de ilk adımı atın: kurumun kayıtlarını yazılı isteyin. Eksik varsa cevap yazısında görünür."
+    : real+" kalemde eksiklik ihtimali var, ayrıca her tarama için geçerli adımlar eklendi. Her kalemi açıp dilekçeyi kopyalayabilirsiniz.";
+
+  var out=$("#findings"); out.innerHTML="";
+  ["core","mal","izin","isg"].forEach(function(m){
+    var ks=keys.filter(function(k){return F[k].m===m;});
+    if(!ks.length) return;
+    var hd=document.createElement("div"); hd.className="secth"; hd.textContent=SEC[m];
+    out.appendChild(hd);
+    ks.forEach(function(k){
+      var f=F[k], el=document.createElement("div");
+      el.className="f "+f.lvl;
+      var lbl=f.lvl==="high"?"Öncelikli":(f.lvl==="med"?"Kontrol et":"Bilgi");
+      var dd=daire? f.d.replace(/\[DAİRE\]/g, daire) : f.d;
+      el.innerHTML='<div class="fhead"><span class="badge">'+lbl+'</span><span class="ftitle">'+esc(f.t)+'</span><span class="chev">▾</span></div>'+
+        '<div class="fbody"><div class="meta"><b>Dayanak:</b> '+esc(f.l)+' &nbsp;·&nbsp; <b>Başvuru yeri:</b> '+esc(f.w)+'</div>'+
+        '<p>'+f.y+'</p><h3 style="margin-top:14px">Dilekçe / yapılacaklar</h3>'+
+        '<div class="dil">'+mark(dd)+'</div>'+
+        '<button class="btn sm cp" type="button">Metni kopyala</button> <span class="small ok"></span></div>';
+      el.querySelector(".fhead").onclick=function(){el.classList.toggle("open");};
+      el.querySelector(".cp").onclick=function(ev){
+        ev.stopPropagation();
+        var note=el.querySelector(".ok");
+        try{
+          navigator.clipboard.writeText(dd).then(function(){
+            note.textContent="Kopyalandı ✓"; setTimeout(function(){note.textContent="";},2500);
+          }).catch(function(){note.textContent="Kopyalanamadı — metni elle seçin.";});
+        }catch(e){note.textContent="Kopyalanamadı — metni elle seçin.";}
+      };
+      out.appendChild(el);
+    });
+  });
+  $("#s2").classList.add("hide"); $("#s3").classList.remove("hide");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- Bağlama ---------- */
+var dsel=$("#daire");
+DAIRE.forEach(function(d){var o=document.createElement("option");o.value=d;o.textContent=d;dsel.appendChild(o);});
+
+$("#statu").onchange=function(){ statu=this.value; $("#go0").disabled=!statu; };
+$("#go0").onclick=function(){ statuNote(); initMods(); $("#s0").classList.add("hide"); $("#s1").classList.remove("hide"); window.scrollTo({top:0,behavior:"smooth"}); };
+$("#back1").onclick=function(){ $("#s1").classList.add("hide"); $("#s0").classList.remove("hide"); window.scrollTo({top:0,behavior:"smooth"}); };
+$("#go1").onclick=function(){ daire=dsel.value; a={}; idx=0; $("#s1").classList.add("hide"); $("#s2").classList.remove("hide"); render(); };
+$("#back2").onclick=function(){ if(idx>0){idx--;render();} };
+$("#again").onclick=function(){ a={};idx=0;sel={core:true};statu="";daire="";$("#statu").value="";dsel.value="";$("#go0").disabled=true;
+  $("#s3").classList.add("hide"); $("#s0").classList.remove("hide"); window.scrollTo({top:0,behavior:"smooth"}); };
+})();
+</script>
+</body>
+</html>
